@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administrador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Escuela de Manejo - Administrador</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        Menú de Administración
+                    </div>
+                    <div class="list-group list-group-flush">
+                        
+                        <a href="/admin/usuarios" class="list-group-item list-group-item-action">Gestión de Usuarios</a>
+                        <a href="/admin/cursos" class="list-group-item list-group-item-action">Gestión de Cursos</a>
+                        <a href="/admin/horarios" class="list-group-item list-group-item-action">Horarios de Clases</a>
+						<a href="https://drive.google.com/drive/folders/19YQXZm6ai6fSO4FOCcL9KH3OlPdVMiqZ?usp=sharing" 
+						   target="_blank" 
+						   class="list-group-item list-group-item-action">
+						   Material de Estudio 
+						</a>
+                        <a href="/admin/reportes" class="list-group-item list-group-item-action">Reportes</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <!-- Mostrar nombre si existe el objeto usuario -->
+                        <div th:if="${usuario}">
+                            <h4>Bienvenido, <span th:text="${usuario.nombre}">Administrador</span></h4>
+                        </div>
+                        <div th:unless="${usuario}">
+                            <h4>Bienvenido, Administrador</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5>Funciones disponibles:</h5>
+                        <div class="row mt-4">
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gestión de Usuarios</h5>
+                                        <p class="card-text">Crear, editar y eliminar usuarios de cualquier tipo</p>
+                                        <a href="/admin/usuarios" class="btn btn-primary">Acceder</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gestión de Cursos</h5>
+                                        <p class="card-text">Crear cursos y asignarlos a instructores</p>
+                                        <a href="/admin/cursos" class="btn btn-primary">Acceder</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Puedes agregar más funcionalidades aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

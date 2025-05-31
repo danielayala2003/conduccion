@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Cursos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .course-card {
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .badge-schedule {
+            background-color: #6c757d;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .already-enrolled {
+            border-left: 5px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Escuela de Manejo</a>
+            <div class="navbar-nav ms-auto">
+                <a th:href="@{/recepcionista/programacion-clases}" class="nav-link">Volver a Estudiantes</a>
+                <a th:href="@{/recepcionista/dashboard}" class="nav-link">Dashboard</a>
+                <a th:href="@{/logout}" class="nav-link">Cerrar sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Asignar Cursos a <span th:text="${estudiante.nombre}"></span></h1>
+            <a th:href="@{/recepcionista/programacion-clases}" class="btn btn-primary">
+                <i class="bi bi-arrow-left"></i> Volver a Estudiantes
+            </a>
+        </div>
+
+        <!-- Mensajes -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Lista de Cursos -->
+        <div class="row">
+            <div th:each="cursoInfo : ${cursos}" class="col-md-6">
+                <div class="card course-card" th:classappend="${cursoInfo.yaInscrito} ? 'already-enrolled' : ''">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${cursoInfo.curso.nombre}"></h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Instructor: <span th:text="${cursoInfo.instructorNombre}"></span>
+                        </h6>
+                        <p class="card-text" th:text="${cursoInfo.curso.descripcion}"></p>
+                        
+                        <!-- Horarios -->
+                        <div class="mb-3">
+                            <h6>Horarios:</h6>
+                            <div th:each="horario : ${cursoInfo.horarios}">
+                                <span class="badge bg-secondary badge-schedule">
+                                    <span th:text="${horario.diaSemana}"></span> 
+                                    <span th:text="${horario.horaInicio} + ' - ' + ${horario.horaFin}"></span>
+                                </span>
+                            </div>
+                            <div th:if="${#lists.isEmpty(cursoInfo.horarios)}">
+                                <span class="text-muted">No hay horarios asignados</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div th:if="${cursoInfo.yaInscrito}">
+                            <form th:action="@{/recepcionista/desinscribir-estudiante}" method="post">
+                                <input type="hidden" name="estudianteId" th:value="${estudiante.id}">
+                                <input type="hidden" name="cursoId" th:value="${cursoInfo.curso.id}">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-x-circle"></i> Desinscribir
+                                </button>
+                            </form>
+                            <small class="text-success d-block mt-2">
+                                <i class="bi bi-check-circle"></i> Estudiante ya está inscrito
+                            </small>
+                        </div>
+                        <div th:unless="${cursoInfo.yaInscrito}">
+                            <form th:action="@{/recepcionista/inscribir-estudiante}" method="post">
+                                <input type="hidden" name="estudianteId" th:value="${estudiante.id}">
+                                <input type="hidden" name="cursoId" th:value="${cursoInfo.curso.id}">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Inscribir
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

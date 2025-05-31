@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes del Sistema</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .card-counter {
+            box-shadow: 2px 2px 10px #DADADA;
+            margin: 5px;
+            padding: 20px 10px;
+            border-radius: 5px;
+            transition: .3s;
+        }
+        .card-counter.primary {
+            background-color: #007bff;
+            color: #FFF;
+        }
+        .card-counter.danger {
+            background-color: #ef5350;
+            color: #FFF;
+        }  
+        .card-counter.success {
+            background-color: #66bb6a;
+            color: #FFF;
+        }
+        .card-counter i {
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+        .card-counter .count-numbers {
+            font-size: 2rem;
+            display: block;
+        }
+        .card-counter .count-name {
+            font-style: italic;
+            text-transform: capitalize;
+            opacity: 0.8;
+            display: block;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Reportes del Sistema</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/admin/dashboard">Volver al Dashboard</a>
+                <a class="nav-link" href="/logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card-counter primary">
+                    <i class="fas fa-users"></i>
+                    <span class="count-numbers" th:text="${totalUsuarios}">0</span>
+                    <span class="count-name">Usuarios Registrados</span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card-counter success">
+                    <i class="fas fa-book"></i>
+                    <span class="count-numbers" th:text="${totalCursos}">0</span>
+                    <span class="count-name">Cursos Disponibles</span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card-counter danger">
+                    <i class="fas fa-calendar"></i>
+                    <span class="count-numbers" th:text="${totalHorarios}">0</span>
+                    <span class="count-name">Horarios Programados</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5>Resumen General</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        Usuarios por Rol
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Administradores
+                                                <span class="badge bg-primary rounded-pill" 
+                                                      th:text="${usuariosPorRol.get('ADMIN')}">0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Instructores
+                                                <span class="badge bg-primary rounded-pill" 
+                                                      th:text="${usuariosPorRol.get('INSTRUCTOR')}">0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Estudiantes
+                                                <span class="badge bg-primary rounded-pill" 
+                                                      th:text="${usuariosPorRol.get('ESTUDIANTE')}">0</span>
+                                            </li>
+											<li class="list-group-item d-flex justify-content-between align-items-center">
+											      Recepcionistas
+											      <span class="badge bg-primary rounded-pill" 
+											           th:text="${usuariosPorRol.get('RECEPCIONISTA')}">0</span>
+											 </li>
+							                 <li class="list-group-item d-flex justify-content-between align-items-center">
+								                     Supervisores
+												 <span class="badge bg-primary rounded-pill" 
+													 th:text="${usuariosPorRol.get('SUPERVISOR')}">0</span>
+												 </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header bg-success text-white">
+                                        Últimos Cursos Agregados
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Instructor</th>
+                                                    <th>Horarios</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="cursoInfo : ${ultimosCursos}">
+                                                    <td th:text="${cursoInfo.curso.nombre}"></td>
+                                                    <td th:text="${cursoInfo.instructorNombre}"></td>
+                                                    <td th:text="${cursoInfo.totalHorarios}"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

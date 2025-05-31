@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Gestión de Usuarios</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/admin/dashboard">Volver al Dashboard</a>
+                <a class="nav-link" href="/logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Mensajes de éxito/error -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Botón para agregar nuevo usuario -->
+        <button class="btn btn-primary mb-3" onclick="resetForm()" data-bs-toggle="modal" data-bs-target="#modalUsuario">
+            Agregar Usuario
+        </button>
+
+        <!-- Lista de usuarios -->
+        <div class="card">
+            <div class="card-header">
+                <h4>Lista de Usuarios</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usuario : ${usuarios}">
+                            <td th:text="${usuario.nombre}"></td>
+                            <td th:text="${usuario.email}"></td>
+                            <td th:text="${usuario.rol}"></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" 
+                                        onclick="editarUsuario('${usuario.id}', '${usuario.nombre}', '${usuario.email}', '${usuario.rol}')">
+                                    Editar
+                                </button>
+                                <a th:href="@{/admin/usuarios/eliminar/{id}(id=${usuario.id})}" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal para agregar/editar usuario -->
+        <div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/admin/usuarios/guardar}" method="post" id="usuarioForm">
+                        <input type="hidden" name="id" id="usuarioId">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitle">Nuevo Usuario</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" id="nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" id="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" name="password" id="password" required>
+                                <small class="text-muted">Para usuarios existentes, complete solo si desea cambiar la contraseña</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Rol</label>
+                                <select class="form-control" name="rol" id="rol" required>
+                                    <option th:each="rol : ${roles}" th:value="${rol}" th:text="${rol}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function resetForm() {
+            document.getElementById('usuarioForm').reset();
+            document.getElementById('modalTitle').innerText = 'Nuevo Usuario';
+            document.getElementById('usuarioId').value = '';
+            document.getElementById('password').required = true;
+        }
+
+        function editarUsuario(id, nombre, email, rol) {
+            document.getElementById('usuarioId').value = id;
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('email').value = email;
+            document.getElementById('rol').value = rol;
+            document.getElementById('password').required = false;
+            document.getElementById('modalTitle').innerText = 'Editar Usuario';
+            
+            var modal = new bootstrap.Modal(document.getElementById('modalUsuario'));
+            modal.show();
+        }
+    </script>
+</body>
+</html>
