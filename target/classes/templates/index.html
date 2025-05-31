@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Escuela de Manejo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="text-center">Escuela de Manejo</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+
+                            <!-- Botón destacado de acceso administrador -->
+                            <a th:href="@{/login(rol='admin')}" class="btn btn-outline-primary">
+                                 Administrador
+                            </a>
+
+                            
+                            <a th:href="@{/login(rol='instructor')}" class="btn btn-outline-primary">Instructor</a>
+                            <a th:href="@{/login(rol='estudiante')}" class="btn btn-outline-primary">Estudiante</a>
+                            <a th:href="@{/login(rol='recepcionista')}" class="btn btn-outline-primary">Recepcionista</a>
+                            <a th:href="@{/login(rol='supervisor')}" class="btn btn-outline-primary">Supervisor</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

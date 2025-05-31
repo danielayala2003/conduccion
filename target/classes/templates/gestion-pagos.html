@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Pagos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .payment-card {
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+        .table-payments {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Gestión de Pagos</a>
+            <div class="navbar-nav ms-auto">
+                <a th:href="@{/recepcionista/dashboard}" class="nav-link">Volver al Panel</a>
+                <a th:href="@{/logout}" class="nav-link">Cerrar sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Gestión de Pagos</h2>
+        
+        <!-- Mensajes -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Formulario de registro de pago -->
+        <div class="card payment-card">
+            <div class="card-header bg-primary text-white">
+                <h5>Registrar Nuevo Pago</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/recepcionista/registrar-pago}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Estudiante</label>
+                        <select class="form-select" name="estudianteId" required>
+                            <option value="" selected disabled>Seleccione un estudiante</option>
+                            <option th:each="estudiante : ${estudiantes}" 
+                                    th:value="${estudiante.id}" 
+                                    th:text="${estudiante.nombre} + ' (' + ${estudiante.email} + ')'"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Monto</label>
+                        <input type="number" class="form-control" name="monto" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Pago</label>
+                        <input type="date" class="form-control" name="fechaPago" 
+                               th:value="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrar Pago</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de pagos registrados -->
+        <div class="card table-payments">
+            <div class="card-header bg-primary text-white">
+                <h5>Historial de Pagos</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(pagos)}" class="alert alert-info">
+                    No hay pagos registrados
+                </div>
+                <table th:unless="${#lists.isEmpty(pagos)}" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Monto</th>
+                            <th>Fecha de Pago</th>
+                            <th>Registrado por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="pago : ${pagos}">
+                            <td th:text="${estudiantesMap?.get(pago.estudianteId)} ?: 'N/A'"></td>
+                            <td th:text="${'$' + #numbers.formatDecimal(pago.monto, 1, 2, 'POINT')}"></td>
+                            <td th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy')}"></td>
+                            <td>Recepcionista</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

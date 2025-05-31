@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Asistencia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Registrar Asistencia</h1>
+            <a th:href="@{/instructor/dashboard}" class="btn btn-secondary">Volver al Panel</a>
+        </div>
+
+        <div th:if="${param.success}" class="alert alert-success">
+            Asistencia registrada correctamente
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/instructor/registrar-asistencia}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Clase</label>
+                        <select class="form-select" th:field="*{asistencia.claseId}" required>
+                            <option value="" disabled selected>Seleccione una clase</option>
+                            <option th:each="clase : ${clases}" 
+                                    th:value="${clase.id}" 
+                                    th:text="${clase.nombre} + ' - ' + ${#temporals.format(clase.fecha, 'dd/MM/yyyy')}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Estudiante</label>
+                        <select class="form-select" th:field="*{asistencia.estudianteId}" required>
+                            <option value="" disabled selected>Seleccione un estudiante</option>
+                            <option th:each="estudiante : ${estudiantes}" 
+                                    th:value="${estudiante.id}" 
+                                    th:text="${estudiante.nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" th:field="*{asistencia.estado}" required>
+                            <option value="PRESENTE">Presente</option>
+                            <option value="AUSENTE">Ausente</option>
+                            <option value="TARDANZA">Tardanza</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrar Asistencia</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

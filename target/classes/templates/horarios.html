@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Horarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+        }
+        .form-label.required:after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">Gestión de Horarios</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/admin/dashboard">Volver al Dashboard</a>
+            <a class="nav-link" href="/logout">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <button class="btn btn-primary mb-3" onclick="resetForm()" data-bs-toggle="modal" data-bs-target="#modalHorario">
+        Agregar Horario
+    </button>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Lista de Horarios</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Curso</th>
+                    <th>Día</th>
+                    <th>Hora Inicio</th>
+                    <th>Hora Fin</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="horario : ${horarios}">
+                    <td>
+                        <span th:each="curso : ${cursos}"
+                              th:if="${curso.id == horario.cursoId}"
+                              th:text="${curso.nombre}">Nombre del curso</span>
+                    </td>
+                    <td th:text="${horario.diaSemana}">Día</td>
+                    <td th:text="${horario.horaInicio}">Inicio</td>
+                    <td th:text="${horario.horaFin}">Fin</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning"
+                                th:attr="onclick='editarHorario(\'' + ${horario.id} + '\', \'' + ${horario.cursoId} + '\', \'' +
+                                ${#strings.escapeJavaScript(horario.diaSemana)} + '\', \'' + ${horario.horaInicio} + '\', \'' + ${horario.horaFin} + '\')'"
+                                data-bs-toggle="modal" data-bs-target="#modalHorario">
+                            Editar
+                        </button>
+                        <a th:href="@{/admin/horarios/eliminar/{id}(id=${horario.id})}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('¿Estás seguro de eliminar este horario?')">
+                            Eliminar
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalHorario" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/admin/horarios/guardar}" method="post" id="horarioForm">
+                    <input type="hidden" name="id" id="horarioId">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Nuevo Horario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label required">Curso</label>
+                            <select class="form-select" name="cursoId" id="cursoHorario" required>
+                                <option value="">Seleccione un curso</option>
+                                <option th:each="curso : ${cursos}" th:value="${curso.id}" th:text="${curso.nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Día de la semana</label>
+                            <select class="form-select" name="diaSemana" id="diaHorario" required>
+                                <option value="">Seleccione un día</option>
+                                <option th:each="dia : ${diasSemana}" th:value="${dia}" th:text="${dia}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Hora de inicio</label>
+                            <input type="time" class="form-control" name="horaInicio" id="horaInicioHorario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Hora de fin</label>
+                            <input type="time" class="form-control" name="horaFin" id="horaFinHorario" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function resetForm() {
+        const form = document.getElementById('horarioForm');
+        form.reset();
+        document.getElementById('horarioId').value = '';
+        document.getElementById('modalTitle').innerText = 'Nuevo Horario';
+    }
+
+    function formatTimeForInput(timeString) {
+        if (!timeString) return '';
+        if (timeString.length === 5 && timeString.indexOf(':') === 2) {
+            return timeString;
+        }
+        if (timeString.length >= 5) {
+            return timeString.substring(0, 5);
+        }
+        return timeString;
+    }
+
+    function editarHorario(id, cursoId, diaSemana, horaInicio, horaFin) {
+        document.getElementById('horarioId').value = id || '';
+        document.getElementById('cursoHorario').value = cursoId || '';
+        document.getElementById('diaHorario').value = diaSemana || '';
+        document.getElementById('horaInicioHorario').value = formatTimeForInput(horaInicio);
+        document.getElementById('horaFinHorario').value = formatTimeForInput(horaFin);
+        document.getElementById('modalTitle').innerText = 'Editar Horario';
+        const modal = new bootstrap.Modal(document.getElementById('modalHorario'));
+        modal.show();
+    }
+
+    document.getElementById('horarioForm').addEventListener('submit', function (e) {
+        const horaInicio = document.getElementById('horaInicioHorario').value;
+        const horaFin = document.getElementById('horaFinHorario').value;
+
+        if (horaInicio && horaFin) {
+            const [hInicio, mInicio] = horaInicio.split(':').map(Number);
+            const [hFin, mFin] = horaFin.split(':').map(Number);
+
+            if (hFin < hInicio || (hFin === hInicio && mFin <= mInicio)) {
+                e.preventDefault();
+                alert('La hora de fin debe ser posterior a la hora de inicio');
+                return false;
+            }
+        }
+        return true;
+    });
+</script>
+</body>
+</html>

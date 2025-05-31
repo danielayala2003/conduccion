@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Estudiantes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Registro de Estudiantes</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/recepcionista/dashboard">Volver al Dashboard</a>
+                <a class="nav-link" href="/recepcionista/logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Mensajes de éxito/error -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Botón para agregar nuevo estudiante -->
+        <button class="btn btn-primary mb-3" onclick="resetForm()" data-bs-toggle="modal" data-bs-target="#modalEstudiante">
+            Registrar Nuevo Estudiante
+        </button>
+
+        <!-- Lista de estudiantes -->
+        <div class="card">
+            <div class="card-header">
+                <h4>Lista de Estudiantes</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="estudiante : ${estudiantes}">
+                            <td th:text="${estudiante.nombre}"></td>
+                            <td th:text="${estudiante.email}"></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" 
+                                        onclick="editarEstudiante(
+                                            '${estudiante.id}', 
+                                            '${estudiante.nombre}', 
+                                            '${estudiante.email}'
+                                        )">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal para agregar/editar estudiante -->
+        <div class="modal fade" id="modalEstudiante" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/recepcionista/registro-estudiante/guardar}" method="post" id="estudianteForm">
+                        <input type="hidden" name="id" id="estudianteId">
+                        <input type="hidden" name="rol" value="ESTUDIANTE">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitle">Nuevo Estudiante</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" name="nombre" id="nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" id="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" name="password" id="password" required>
+                                <small class="text-muted">Para estudiantes existentes, complete solo si desea cambiar la contraseña</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function resetForm() {
+            document.getElementById('estudianteForm').reset();
+            document.getElementById('modalTitle').innerText = 'Nuevo Estudiante';
+            document.getElementById('estudianteId').value = '';
+            document.getElementById('password').required = true;
+        }
+
+        function editarEstudiante(id, nombre, email) {
+            document.getElementById('estudianteId').value = id;
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('email').value = email;
+            document.getElementById('password').required = false;
+            document.getElementById('modalTitle').innerText = 'Editar Estudiante';
+            
+            var modal = new bootstrap.Modal(document.getElementById('modalEstudiante'));
+            modal.show();
+        }
+    </script>
+</body>
+</html>

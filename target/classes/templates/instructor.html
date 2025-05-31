@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Instructor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .feature-card {
+            height: 180px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .action-section {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="bg-primary text-white p-4 rounded mb-4">
+            <h1 class="mb-0">Panel del Instructor</h1>
+            <p class="mb-0">Bienvenido, <span th:text="${instructor.nombre}">Nombre Instructor</span></p>
+        </div>
+
+        <!-- Alertas -->
+        <div th:if="${param.error}" class="alert alert-danger">
+            <span th:text="${param.error}">Error</span>
+        </div>
+        <div th:if="${param.success}" class="alert alert-success">
+            Operación realizada con éxito
+        </div>
+
+        <!-- Cursos asignados -->
+        <div class="mb-4" th:if="${not #lists.isEmpty(cursos)}">
+            <h3>Tus Cursos Asignados</h3>
+            <div class="row">
+                <div class="col-md-4 mb-3" th:each="curso : ${cursos}">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 th:text="${curso.nombre}">Nombre Curso</h5>
+                            <p th:text="${curso.descripcion}">Descripción</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Funcionalidades principales -->
+        <h3 class="mb-3">Acciones Disponibles</h3>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <a th:href="@{/instructor/estudiantes}" class="card feature-card card-link">
+                    <div class="card-body d-flex flex-column justify-content-center text-center">
+                        <i class="bi bi-people-fill fs-1 mb-2"></i>
+                        <h5>Estudiantes Asignados</h5>
+                        <p class="text-muted small">Ver lista de estudiantes</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <a th:href="@{/instructor/asistencia}" class="card feature-card card-link">
+                    <div class="card-body d-flex flex-column justify-content-center text-center">
+                        <i class="bi bi-check-circle-fill fs-1 mb-2"></i>
+                        <h5>Registrar Asistencia</h5>
+                        <p class="text-muted small">Marcar asistencia a clases</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <a th:href="@{/instructor/evaluaciones}" class="card feature-card card-link">
+                    <div class="card-body d-flex flex-column justify-content-center text-center">
+                        <i class="bi bi-clipboard-check fs-1 mb-2"></i>
+                        <h5>Evaluaciones Prácticas</h5>
+                        <p class="text-muted small">Registrar evaluaciones</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Funcionalidades secundarias -->
+        <div class="row action-section">
+            <div class="col-md-4 mb-3">
+                <a th:href="@{/instructor/material}" class="card feature-card card-link">
+                    <div class="card-body d-flex flex-column justify-content-center text-center">
+                        <i class="bi bi-file-earmark-arrow-up fs-1 mb-2"></i>
+                        <h5>Material del Curso</h5>
+                        <p class="text-muted small">Subir material específico</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <a th:href="@{/instructor/calendario}" class="card feature-card card-link">
+                    <div class="card-body d-flex flex-column justify-content-center text-center">
+                        <i class="bi bi-calendar-check fs-1 mb-2"></i>
+                        <h5>Calendario</h5>
+                        <p class="text-muted small">Ver clases asignadas</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-4 text-center">
+            <form th:action="@{/instructor/logout}" method="post">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+                </button>
+            </form>
+        </div>
+
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
+</body>
+</html>
